@@ -8,15 +8,19 @@ class OrderWriter {
 
     private final OrderRepository orderRepository;
     private final OrderItemRepository orderItemRepository;
+    private final CustomerResolver customerResolver;
 
-    OrderWriter(OrderRepository orderRepository, OrderItemRepository orderItemRepository) {
+    OrderWriter(
+            OrderRepository orderRepository,
+            OrderItemRepository orderItemRepository,
+            CustomerResolver customerResolver) {
         this.orderRepository = orderRepository;
         this.orderItemRepository = orderItemRepository;
+        this.customerResolver = customerResolver;
     }
 
     Order save(CreateOrderRequest request, List<ResolvedOrderItem> items, String status) {
-        Order order = orderRepository.save(new Order(
-                request.customerFullName(), request.customerAddress(), request.customerPhone(), status));
+        Order order = orderRepository.save(new Order(customerResolver.resolve(request), status));
         items.stream()
                 .map(item -> item.toOrderItem(order.getId()))
                 .forEach(orderItemRepository::save);
