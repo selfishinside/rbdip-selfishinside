@@ -98,6 +98,9 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
                     <testFailureIgnore>true</testFailureIgnore>
+                    <systemPropertyVariables>
+                        <api.version>1.44</api.version>
+                    </systemPropertyVariables>
                 </configuration>
             </plugin>
 
