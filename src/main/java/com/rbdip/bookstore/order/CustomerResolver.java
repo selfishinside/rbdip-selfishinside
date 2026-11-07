@@ -1,6 +1,7 @@
 package com.rbdip.bookstore.order;
 
 import com.rbdip.bookstore.customer.Customer;
+import com.rbdip.bookstore.customer.CustomerName;
 import com.rbdip.bookstore.customer.CustomerRepository;
 import org.springframework.stereotype.Component;
 
@@ -14,10 +15,14 @@ class CustomerResolver {
     }
 
     Customer resolve(CreateOrderRequest request) {
+        CustomerName name = CustomerName.from(request.customerFullName());
         return customerRepository
-                .findFirstByFullNameAndAddressAndPhone(
-                        request.customerFullName(), request.customerAddress(), request.customerPhone())
+                .findFirstByFirstNameAndLastNameAndAddressAndPhone(
+                        name.firstName(), name.lastName(), request.customerAddress(), request.customerPhone())
                 .orElseGet(() -> customerRepository.save(new Customer(
-                        request.customerFullName(), request.customerAddress(), request.customerPhone())));
+                        name.firstName(),
+                        name.lastName(),
+                        request.customerAddress(),
+                        request.customerPhone())));
     }
 }
